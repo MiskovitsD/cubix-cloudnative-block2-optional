@@ -1,0 +1,21 @@
+// run and inspect
+docker run --name backend -p 8081:8080 -d --rm quay.io/drsylent/cubix/block2/optional-backend:springboot3
+docker inspect backend
+
+// I found a label and an environment variable
+// -> LABEL config.location=/var/opt/appconfig/application.properties
+// -> ENV SPRING_CONFIG_LOCATION=file:///var/opt/appconfig/application.properties
+
+// let's copy the original configuration file
+docker cp backend:/var/opt/appconfig/application.properties .
+docker stop backend
+
+// I made the desired configuration file and named it "app-homework.properties"
+// then created and mounted a volume to store it
+docker volume create backend-volume
+docker run --name backend -p 8081:8080 -d --rm --mount type=volume,source=backend-volume,destination=/var/opt/appconfig/homework quay.io/drsylent/cubix/block2/optional-backend:springboot3
+docker cp ./app-homework.properties backend:/var/opt/appconfig/homework/app-homework.properties
+docker stop backend
+
+// finally, I've overwritten the label and the environment variable to point on the new configuration file
+docker run --name backend -p 8081:8080 -d --rm --mount type=volume,source=backend-volume,destination=/var/opt/appconfig/homework --env SPRING_CONFIG_LOCATION=file:///var/opt/appconfig/homework/app-homework.properties --label config.location=/var/opt/appconfig/homework/app-homework.properties quay.io/drsylent/cubix/block2/optional-backend:springboot3
