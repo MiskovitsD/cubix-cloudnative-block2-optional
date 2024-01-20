@@ -61,3 +61,14 @@ For testing I used this command:
 ```
 docker run --name frontend2 -d -p 8080:8080 --rm -e JAVA_OPTS="-Dfrontend.default.message\=env" -e JAR_ARGS="--backend.url=http://host.docker.internal:8081 --spring.main.banner-mode\=off" frontend2
 ```
+
+# Third task notes: Docker Compose
+
+Response from call __"Will call without message"__
+```json
+{
+    "msForReply": 3,
+    "frontendMessage": "env",
+    "backendSourceData": "cubix"
+}
+```

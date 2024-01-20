@@ -1,0 +1,18 @@
+services:
+  backend:
+    image: quay.io/drsylent/cubix/block2/optional-backend:springboot3
+    volumes:
+      - ./app-homework.properties:/var/opt/appconfig/homework/app-homework.properties
+    environment:
+      - SPRING_CONFIG_LOCATION=file:///var/opt/appconfig/homework/app-homework.properties
+    labels:
+      - config.location=/var/opt/appconfig/homework/app-homework.properties
+
+  frontapp:
+    image: frontend
+    ports:
+      - 8080:8080
+    environment:
+      - BACKEND_URL=http://backend:8080
+      - JAVA_OPTS=-Dfrontend.default.message=env
+      - JAR_ARGS=--spring.main.banner-mode=off
