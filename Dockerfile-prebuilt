@@ -1,0 +1,28 @@
+FROM quay.io/drsylent/cubix/block2/optional-base:ubuntu23
+
+# Expose the default port
+EXPOSE 8080
+
+# Runtime arguments
+ENV JAVA_OPTS=""
+ENV JAR_ARGS=""
+
+# Set the ENTRYPOINT with placeholders for extra arguments
+ENTRYPOINT exec java $JAVA_OPTS -jar app.jar $JAR_ARGS
+#ENTRYPOINT [ "java", "$JAVA_OPTS", "-jar", "app.jar", "$APP_ARGS"]
+#ENTRYPOINT [ "/bin/sh" "-c" "java $JAVA_OPTS -jar app.jar $JAR_ARGS" ]
+
+# Install Java 17 JRE
+USER 0
+RUN /bin/sh -c "apt-get -y update && apt-get -y install openjdk-17-jre-headless && rm -rf /var/lib/apt/lists/*"
+# Make app directories
+RUN /bin/sh -c "mkdir /var/opt/appconfig /var/opt/app && chown 1001 /var/opt/appconfig /var/opt/app"
+
+# Copy the pre-built application
+USER 1001
+WORKDIR /var/opt/app
+COPY ./frontend/target/*.jar app.jar
+
+# Set label of image builder from a build argument
+ARG IMAGE_BUILDER=unknown
+LABEL image.builder=${IMAGE_BUILDER}
