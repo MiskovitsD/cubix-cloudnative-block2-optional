@@ -6,7 +6,7 @@ COPY frontend/.mvn .mvn
 COPY frontend/src src
 COPY frontend/mvnw .
 COPY frontend/pom.xml .
-RUN ./mvnw clean verify
+RUN --mount=type=cache,target=/root/.m2 ./mvnw clean verify
 
 
 FROM quay.io/drsylent/cubix/block2/optional-base:ubuntu23
